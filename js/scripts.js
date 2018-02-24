@@ -16,35 +16,37 @@ const lookupPhase = function(projectpha) {
   switch(projectpha) {
   case 'construction':
     return {
-      color: "#2b259e",
+      color: "purple",
       description: 'In Construction'
     }
   case 'procurement':
     return {
-      color: "#257b9e",
+      color: "green",
       description: 'In Procurement'
     }
   case 'design':
     return {
-      color: "#259e97",
+      color: "cadetblue",
       description: 'In Design'
     }
     case 'complete':
       return {
-        color: "#7a259e",
+        color: "orange",
         description: 'Completed'
       }
     }
 	}
 
 
-var redMarker = L.AwesomeMarkers.icon({
-	markerColor: 'red'
+var Marker = L.AwesomeMarkers.icon({
+	icon: "dollar-sign",
+	markerColor: "green",
+	iconColor: "white",
 });
 
 NYCHA.features.forEach(function(feature) {
 	var centroid = turf.centerOfMass(feature);
-	L.marker([centroid.geometry.coordinates[1], centroid.geometry.coordinates[0]], {icon: redMarker}).addTo(map)
+	L.marker([centroid.geometry.coordinates[1], centroid.geometry.coordinates[0]], {icon: Marker}).addTo(map)
 })
 
 
