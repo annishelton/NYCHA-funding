@@ -3,6 +3,7 @@ var defaultZoom = 11;
 
 var map = L.map('my-map').setView(defaultCenter, defaultZoom);
 
+// tile layer gives you tile sets
 L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 	subdomains: 'abcd',
@@ -34,16 +35,18 @@ const lookupPhase = function(projectpha) {
         description: 'Completed'
       }
     }
+	}
 
-// add geojson using jquery's $.getJSON()
-///$.getJSON('data/study_boundary.geojson', function(study_boundary) {
-///  L.geoJSON(study_boundary, {
-    ///style: {
-    ///  dashArray: '3 10',
-      ///color: 'white',
-    ///  fillOpacity: 0,
-  ///  }
-///  }).addTo(map);
+
+var redMarker = L.AwesomeMarkers.icon({
+	markerColor: 'red'
+});
+
+NYCHA.features.forEach(function(feature) {
+	var centroid = turf.centerOfMass(feature);
+	L.marker([centroid.geometry.coordinates[1], centroid.geometry.coordinates[0]], {icon: redMarker}).addTo(map)
+})
+
 
   // Use L.geoJSON to load PLUTO parcel data that we clipped in QGIS and change the CRS from 2263 to 4326
   // this was moved inside the getJSON callback so that the parcels will load on top of the study area study_boundary
@@ -52,15 +55,16 @@ const lookupPhase = function(projectpha) {
 
           return {
             color: 'white',
-            fillColor: lookupPhase(feature.properties.LandUse).color,
-            fillOpacity: 0.8,
+            fillColor: lookupPhase(feature.properties.projectpha).color,
             weight: 1,
+						fillOpacity: 0.8,
           }
       },
-    onEachFeature: function(feature, layer) {
-      const description = lookupLandUse(feature.properties.LandUse).description;
 
-      layer.bindPopup(`${feature.properties.Address}<br/>${description}`, {
+    onEachFeature: function(feature, layer) {
+      const description = lookupPhase(feature.properties.projectpha).description;
+
+      layer.bindPopup(`Total Project Cost = <br/>${feature.properties.Fedfunds}`, {
         closeButton: false,
         minWidth: 60,
         offset: [0, -10]
@@ -82,5 +86,4 @@ const lookupPhase = function(projectpha) {
         blocksGeojson.resetStyle(e.target);
       });
     }
-  }).addTo(map);
-}
+	}).addTo(map);
